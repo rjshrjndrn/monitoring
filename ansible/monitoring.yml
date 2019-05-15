@@ -1,30 +1,22 @@
-- name: Creating prometheus configuration folder
-  hosts: prometheus
+- hosts: prometheus
   become: yes
   vars:
-    directory:
-      prometheus:
-        path: /root/dockerdata/prometheus/data/
-        owner: nobody
-        group: nogroup
-      grafana:
-        path: /root/dockerdata/grafana/data/
-        owner: 472
-        group: nogroup
+    grafana_admin_password: changethepassword
   pre_tasks:
-    - name: Create prometheus data dir
+    - name: Making docker stac/conf dirs
       file:
-        path: "{{ item.path }}"
+        path: "{{ item }}"
         state: directory
-        mode: 0755
-        owner: "{{ item.owner }}"
-        group: "{{ item.group }}"
-      with_dict: "{{ directory }}"
+        owner: root
+        group: root
+      with_items:
+        - /home/deployer/config
+        - /home/deployer/stack
   roles:
     - prometheus
     - grafana
 
-- hosts: all
+- hosts: vm-node-exporter
   become: yes
   roles:
     - vm-agents-nodeexporter

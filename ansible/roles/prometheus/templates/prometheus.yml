@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 1m
+  scrape_timeout: 10s
+  evaluation_interval: 1m
+  # Clustername is defined for multi swarm cluster
+  # can name first cluster as DS1 and 2nd as DS2 ... DSn
+  # all metrics will have label as cluster: < value >
+  # This value won't be accessible from GUI but for external tools like
+  # federation or alertmanager
+  external_labels:
+    federation: DC1
+
+
+scrape_configs:
+
+  - job_name: 'vm-node-exporter'
+    static_configs:
+      # This empty line will make sure indentation is proper after ansible templating
+      - targets: [ '{{groups['vm-node-exporter']|join(':9100\', \'')}}:9100']
+
