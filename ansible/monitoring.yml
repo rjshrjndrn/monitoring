@@ -1,0 +1,30 @@
+- name: Creating prometheus configuration folder
+  hosts: prometheus
+  become: yes
+  vars:
+    directory:
+      prometheus:
+        path: /root/dockerdata/prometheus/data/
+        owner: nobody
+        group: nogroup
+      grafana:
+        path: /root/dockerdata/grafana/data/
+        owner: 472
+        group: nogroup
+  pre_tasks:
+    - name: Create prometheus data dir
+      file:
+        path: "{{ item.path }}"
+        state: directory
+        mode: 0755
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+      with_dict: "{{ directory }}"
+  roles:
+    - prometheus
+    - grafana
+
+- hosts: all
+  become: yes
+  roles:
+    - vm-agents-nodeexporter
